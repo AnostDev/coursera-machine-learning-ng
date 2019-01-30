@@ -18,10 +18,13 @@ grad = zeros(size(theta));
 %               derivatives of the cost w.r.t. each parameter in theta
 %
 % Note: grad should have the same dimensions as theta
-%
-J = (1/m) * sum  (  -y .* log(sigmoid(X * theta )) - (1 - y) .* log(1 - sigmoid(X * theta))); 
+% Vectorize
+% J = (1/m) * sum  (  -y .* log(sigmoid(X * theta )) - (1 - y) .* log(1 - sigmoid(X * theta))); 
+% grad = (1/m) * sum( (sigmoid(X * theta) - y) .* X)';
 
-grad = (1/m) * sum( (sigmoid(X * theta) - y) .* X)';
+% Ultra vectorize
+J = (1/m) * (  -y' * log(sigmoid(X * theta )) - (1 - y)' * log(1 - sigmoid(X * theta))); 
+grad = (1/m) * X' * (sigmoid(X * theta) - y);
 % =============================================================
 
 end
