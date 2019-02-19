@@ -22,6 +22,7 @@ Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
 Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):end), ...
                  num_labels, (hidden_layer_size + 1));
 
+
 % Setup some useful variables
 m = size(X, 1);
 
@@ -29,7 +30,7 @@ m = size(X, 1);
 Y = zeros(m, num_labels);
 for i = 1:m
   Y(i,y(i)) = 1;
-endfor
+end
   
 % You need to return the following variables correctly 
 J = 0;
@@ -37,13 +38,19 @@ X = [ones(m,1) X];
 z2 = Theta1 * X';
 a2 = sigmoid(z2);
 
-a2 = [ones(hidden_layer_size, 1) a2];
+a2 = [ones(1, m); a2];
+
 z3 = Theta2 * a2;
 a3 = sigmoid(z3);
-J = (1/m) * ( sum((-Y') .* log(a3) - (1- Y')*(log(1-a3))));
+Y = Y';
+% TODO, find a nice way to do the sum
+% sum(A, 'all') is not working
 
+J = sum((1/m) * sum( log(a3) .* (-Y) - (log(1-a3) .* (1- Y))));
 
-##J = (1/m) * log(sigmoid());
+% Regularization
+J = J + (lambda/(2*m) ) * (sum(sum(Theta1(:, 2:end).^2)) + sum(sum(Theta2(:, 2:end).^2)));
+
 Theta1_grad = zeros(size(Theta1));
 Theta2_grad = zeros(size(Theta2));
 
